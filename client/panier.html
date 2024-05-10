@@ -40,28 +40,24 @@
                 <div class="row">
                   <div class="col-md-4">
                     <div class="image-container">
-                      <img src="assets/img/pan6.jpg" alt="" class="img-fluid">
+                      
                       <div class="image-info">
-                        <p>Code:<br><a href="#" class="text-primary fw-bold">Q001</a></p>
-                        <p>Prix:100dt</p>
+                        
                       </div>
                     </div>
                   </div>
                   <div class="col-md-4">
                     <div class="image-container">
-                      <img src="assets/img/pan5.jpg" alt="" class="img-fluid">
+                     
                       <div class="image-info">
-                        <p>Code:<br><a href="#" class="text-primary fw-bold">Q001</a></p>
-                        <p>Prix:100dt</p>
+                       
                       </div>
                     </div>
                   </div>
                   <div class="col-md-4">
                     <div class="image-container">
-                      <img src="assets/img/pan4.jpg" alt="" class="img-fluid">
                       <div class="image-info">
-                        <p>Code:<br><a href="#" class="text-primary fw-bold">B001</a></p>
-                        <p>Prix:400dt</p>
+                       
                       </div>
                     </div>
                   </div>
@@ -131,4 +127,37 @@
   </div>
 </footer><!-- End Footer -->
 </body>
+<script>///// code de clique sur ajouter au panier lil page panier .html//////
+  document.addEventListener("DOMContentLoaded", function() {
+    // Récupérer les informations des panneaux sélectionnés depuis le stockage local
+    var panneauxSelectionnes = JSON.parse(localStorage.getItem('panneauxSelectionnes'));
+    var panierContainer = document.querySelector('.card-body.text-center .row');
+
+    // Vérifier si des panneaux ont été sélectionnés
+    if (panneauxSelectionnes && panneauxSelectionnes.length > 0) {
+        // Parcourir les panneaux sélectionnés et les afficher dans le panier
+        panneauxSelectionnes.forEach(function(panneau) {
+            var panneauHTML = `
+                <div class="col-md-4">
+                    <div class="image-container">
+                        <img src="${panneau.photo}" alt="" class="img-fluid">
+                        <div class="image-info">
+                            <p>code_face: <a href="#" class="text-primary fw-bold">${panneau.codeFace}</a></p>
+                            <p>Prix: ${panneau.prix}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            panierContainer.insertAdjacentHTML('beforeend', panneauHTML);
+        });
+    } else {
+        // Afficher un message si aucun panneau n'a été sélectionné
+        panierContainer.innerHTML = '<p>Aucun panneau sélectionné.</p>';
+    }
+
+    // Effacer les données du stockage local après les avoir utilisées
+    localStorage.removeItem('panneauxSelectionnes');
+});
+///// code de clique sur ajouter au panier lil page panier .html//////
+</script>
 </html>

@@ -12,6 +12,7 @@
   <!-- Favicons -->
   <link href="assets/img/favicon.png" rel="icon">
   <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
   <!-- Google Fonts -->
   <link href="https://fonts.gstatic.com" rel="preconnect">
@@ -36,6 +37,7 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+  
 </head>
 
 <body>
@@ -196,58 +198,84 @@
     
     <section class="section">
       <div class="row">
-    
-        <div class="col-lg-12">
+        <div class="col-lg-6">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Nombre de panneaux réservés par le client au fil des mois</h5>
-              <!-- Bar Chart -->
-              <canvas id="barChart" style="max-height: 400px;"></canvas>
+              <h5 class="card-title">Nombre trafic routier</h5>
+              <div id="reportsChart"></div>
+
               <script>
-                document.addEventListener("DOMContentLoaded", () => {
-                  new Chart(document.querySelector('#barChart'), {
-                    type: 'bar',
-                    data: {
-                      labels:['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet'],
-                      datasets: [{
-                        label: 'Panneaux',
-                        data: [65, 59, 80, 81, 56, 55, 40],
-                        backgroundColor: [
-                          'rgba(255, 99, 132, 0.2)',
-                          'rgba(255, 159, 64, 0.2)',
-                          'rgba(255, 205, 86, 0.2)',
-                          'rgba(75, 192, 192, 0.2)',
-                          'rgba(54, 162, 235, 0.2)',
-                          'rgba(153, 102, 255, 0.2)',
-                          'rgba(201, 203, 207, 0.2)'
-                        ],
-                        borderColor: [
-                          'rgb(255, 99, 132)',
-                          'rgb(255, 159, 64)',
-                          'rgb(255, 205, 86)',
-                          'rgb(75, 192, 192)',
-                          'rgb(54, 162, 235)',
-                          'rgb(153, 102, 255)',
-                          'rgb(201, 203, 207)'
-                        ],
-                        borderWidth: 1
-                      }]
-                    },
-                    options: {
-                      scales: {
-                        y: {
-                          beginAtZero: true
-                        }
-                      }
+                document.addEventListener("DOMContentLoaded", async () => {
+                    try {
+                        const response = await fetch('http://localhost:3001/statistic/');
+                        const data = await response.json();
+            
+                        const panneauxByRegionAndTrafic = data.panneauxByRegionAndTrafic;
+            
+                        const regions = Object.keys(panneauxByRegionAndTrafic);
+                        const seriesData = [];
+            
+                        regions.forEach(region => {
+                            const traficData = Object.values(panneauxByRegionAndTrafic[region]);
+                            seriesData.push({
+                                name: region,
+                                data: traficData
+                            });
+                        });
+            
+                        new ApexCharts(document.querySelector("#reportsChart"), {
+                            series: seriesData,
+                            chart: {
+                                height: 350,
+                                type: 'area',
+                                toolbar: {
+                                    show: false
+                                }
+                            },
+                            markers: {
+                                size: 4
+                            },
+                            fill: {
+                                type: "gradient",
+                                gradient: {
+                                    shadeIntensity: 1,
+                                    opacityFrom: 0.3,
+                                    opacityTo: 0.4,
+                                    stops: [0, 90, 100]
+                                }
+                            },
+                            dataLabels: {
+                                enabled: false
+                            },
+                            stroke: {
+                                curve: 'smooth',
+                                width: 2
+                            },
+                            xaxis: {
+                                type: 'category',
+                                categories: Object.keys(panneauxByRegionAndTrafic[regions[0]]), // Utilise les catégories de la première région
+                            },
+                            tooltip: {
+                                x: {
+                                    format: 'dd/MM/yy HH:mm'
+                                },
+                            }
+                        }).render();
+                    } catch (error) {
+                        console.error("Error fetching data:", error);
                     }
-                  });
                 });
-              </script>
-              <!-- End Bar Chart -->
+            </script>
+            
+                <!-- End Line Chart -->
+
+              </div>
+
             </div>
           </div>
-        </div>
-        
+
+
+
         <div class="col-lg-6">
           <div class="card">
             <div class="card-body">
@@ -301,106 +329,131 @@
         <div class="col-lg-6">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Nombre d'affichages publicitaires</h5>
-    
-              <!-- Vertical Bar Chart -->
-                  <div id="verticalBarChart" style="min-height: 400px;" class="echart"></div>
-    
-                  <script>
-                    document.addEventListener("DOMContentLoaded", () => {
-                      echarts.init(document.querySelector("#verticalBarChart")).setOption({
-                        
-                        tooltip: {
-                          trigger: 'axis',
-                          axisPointer: {
-                            type: 'shadow'
-                          }
-                        },
-                        legend: {},
-                        grid: {
-                          left: '3%',
-                          right: '4%',
-                          bottom: '3%',
-                          containLabel: true
-                        },
-                        xAxis: {
-                          type: 'value',
-                          boundaryGap: [0, 0.01]
-                        },
-                        yAxis: {
-                          type: 'category',
-                          data: ['Panneaux affichage', 'Écrans numériques', 'Publicités de transport']
-                        },
-                        series: [{
-                            name: '2023',
-                            type: 'bar',
-                            data: [500, 70,100]
-                          },
-                          {
-                            name: '2024',
-                            type: 'bar',
-                            data: [ 600, 90,300]
-                          }
-                        ]
-                      });
-                    });
-                  </script>
-                  <!-- End Vertical Bar Chart -->
-    
-                </div>
-              </div>
+              <h5 class="card-title">Nombre de panneau</h5>
+
+              <!-- Bar Chart -->
+              <div id="barChart" style="min-height: 400px;" class="echart"></div>
+              <script>
+                document.addEventListener("DOMContentLoaded", async () => {
+  try {
+      const response = await fetch('http://localhost:3001/statistic/');
+      const data = await response.json();
+      
+      const panneauxByType = data.panneauxByType; // Utiliser la propriété correcte renvoyée par le serveur
+
+      // Convertir les données en un tableau exploitable par ApexCharts
+      const labels = Object.keys(panneauxByType);
+      const dataCounts = Object.values(panneauxByType);
+
+      // Définir un tableau de couleurs personnalisé pour les barres
+      const customColors = ['#FF5733', '#33FF9C', '#3383FF', '#FF33EB', '#B333FF', '#FFF333', '#33B5FF', '#FFC933', '#FF3358', '#8C33FF'];
+
+      new ApexCharts(document.querySelector("#barChart"), {
+          series: [{
+              data: dataCounts,
+              // Associer les couleurs personnalisées à chaque barre
+              colors: customColors
+          }],
+          chart: {
+              type: 'bar',
+              height: 350
+          },
+          plotOptions: {
+              bar: {
+                  borderRadius: 4,
+                  horizontal: true,
+              }
+          },
+          dataLabels: {
+              enabled: false
+          },
+          xaxis: {
+              categories: labels,
+          }
+      }).render();
+  } catch (error) {
+      console.error("Error fetching data:", error);
+  }
+});
+
+              </script>
+
+              
+              <!-- End Bar Chart -->
+
             </div>
-            
-            
-            <div class="col-lg-12">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">La proportion de panneaux réservés par rapport au total pour chaque mois</h5>
-            <!-- Radial Bar Chart -->
-            <div id="radialBarChart"></div>
-  
-          <script>
-            document.addEventListener("DOMContentLoaded", () => {
-              new ApexCharts(document.querySelector("#radialBarChart"), {
-                series: [44, 55, 67, 83],
-                chart: {
-                  height: 350,
-                  type: 'radialBar',
-                  toolbar: {
-                    show: true
-                  }
-                },
-                plotOptions: {
-                  radialBar: {
-                    
-                    dataLabels: {
-                      name: {
-                        fontSize: '22px',
-                      },
-                      value: {
-                        fontSize: '16px',
-                      },
-                      total: {
-                        show: true,
-                        label: 'Total',
-                        formatter: function(w) {
-                          
-                          return 249
-                        }
-                      }
-                    }
-                  }
-                },
-              labels: ['Janvier','Fivrier', 'Mars', 'Avril', 'Mai'],
-            }).render();
-            });
-          </script>
-          <!-- End Radial Bar Chart -->
           </div>
         </div>
-      </div>
-        
-    </div>
+
+          
+
+      
+        <div class="col-lg-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Type Media vusiel</h5>
+
+              <!-- Donut Chart -->
+              <div id="donutChart" style="min-height: 400px;" class="echart"></div>
+
+              <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                    // Récupération des données depuis l'API
+                    fetch('http://localhost:3001/statistic/')
+                    .then(response => response.json())
+                    .then(data => {
+                        const compagnes = data.compagnesByMediaVisuel;
+            
+                        // Construction du tableau de données pour le graphique
+                        const chartData = Object.keys(compagnes).map(mediaVisuel => ({
+                            value: compagnes[mediaVisuel],
+                            name: mediaVisuel
+                        }));
+            
+                        // Initialisation du graphique avec les données
+                        echarts.init(document.querySelector("#donutChart")).setOption({
+                            tooltip: {
+                                trigger: 'item'
+                            },
+                            legend: {
+                                top: '5%',
+                                left: 'center'
+                            },
+                            series: [{
+                                name: 'media_vusiel',
+                                type: 'pie',
+                                radius: ['40%', '70%'],
+                                avoidLabelOverlap: false,
+                                label: {
+                                    show: false,
+                                    position: 'center'
+                                },
+                                emphasis: {
+                                    label: {
+                                        show: true,
+                                        fontSize: '18',
+                                        fontWeight: 'bold'
+                                    }
+                                },
+                                labelLine: {
+                                    show: false
+                                },
+                                // Utilisation des données récupérées depuis l'API
+                                data: chartData
+                            }]
+                        });
+                    })
+                    .catch(error => console.error("Error while fetching data:", error));
+                });
+            </script>
+            
+            
+              <!-- End Donut Chart -->
+
+            </div>
+          </div>
+        </div>
+    
   </section>
 
   </main><!-- End #main -->

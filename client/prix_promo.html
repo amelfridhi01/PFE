@@ -197,19 +197,18 @@
       <div class="card-body">
         <div class="row mb-3">
   
-        <div class="col-sm-3">
-          <label>Promo:</label>
-          <select id="promo-select" class="form-select" aria-label="Default select example">
-            <option selected="">Choisir votre Promo</option>
-            <option value="1"></option>
-          
-          </select>
-        </div>
+          <div class="col-sm-3">
+            <label for="promo-select">Promo:</label>
+            <select id="promo-select" class="form-select" aria-label="Default select example">
+              <option value="" selected>Choisir votre Promo</option>
+            </select>
+          </div>
        
    
       <div class="col-12">
        
-      <button id="valider-button" class="btn btn-primary" type="submit">Valider</button>
+  
+      <button id="valider-button" class="btn btn-primary" type="button">Valider</button>
     </div>
     <div style="height: 50px;"></div>
                   <!-- Table with stripped rows -->
@@ -270,44 +269,79 @@
 <!-- Template Main JS File -->
 <script src="assets/js/main.js"></script>
 
-</body>
-<script>
-  // Fetch data mta3 el panneaux from the server
-  async function fetchData() {
-      try {
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const fetchData = async () => {
+        try {
           const response = await fetch('http://localhost:3001/prix');
-          const data = await response.json();
-          return data;
-      } catch (error) {
+          return response.json();
+        } catch (error) {
           console.error('Error fetching data:', error);
-          throw error; // bech n tcheki si famma erreur
-      }
-  }
+          throw error;
+        }
+      };
+
+      const populateTable = (data) => {
+        const tableBody = document.querySelector('#prixpromoTable tbody');
+        tableBody.innerHTML = '';
+
+        data.forEach((prix) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${prix.date_DEB_promo}</td>
+            <td>${prix.date_FIN_promo}</td>
+            <td>${prix.prix_native}</td>
+            <td>${prix.promo}</td>
+            <td>${prix.prix_promotion}</td>
+            <td>${prix.cree_a}</td>
+            <td>${prix.mis_a_jour_a}</td>
+          `;
+          tableBody.appendChild(row);
+        });
+      };
+
+      const populatePromoOptions = (promos) => {
+        const selectElement = document.getElementById('promo-select');
+        selectElement.innerHTML = '';
+        promos.forEach((promo) => {
+          const option = document.createElement('option');
+          option.text = promo;
+          option.value = promo;
+          selectElement.appendChild(option);
+        });
+      };
+
+      const filterByPromo = async (promo) => {
+        try {
+          const response = await fetch(`http://localhost:3001/prix/promo/${promo}`);
+          return response.json();
+        } catch (error) {
+          console.error('Error fetching filtered data:', error);
+          throw error;
+        }
+      };
+
+      document.getElementById('valider-button').addEventListener('click', async () => {
+        const promo = document.getElementById('promo-select').value;
+        let data;
+        if (promo) {
+          data = await filterByPromo(promo);
+        } else {
+          data = await fetchData();
+        }
+        populateTable(data);
+      });
+
+      const data = await fetchData();
+      populateTable(data);
+      const uniquePromos = [...new Set(data.map((prix) => prix.promo))];
+      populatePromoOptions(uniquePromos);
+    });
   
-  // Populate the table with fetched data
-  async function populateTable() {
-      try {
-          const data = await fetchData();
-          const tableBody = document.querySelector('#prixpromoTable tbody');
-  
-          data.forEach(function (prix) {
-              var row = document.createElement('tr');
-              row.innerHTML = `
-                  <td>${prix.date_DEB_promo}</td>
-                  <td>${prix.date_FIN_promo}</td>
-                  <td>${prix.prix_native}</td>
-                  <td>${prix.promo}</td>
-                  <td>${prix.prix_promotion}</td>
-                  <td>${prix.cree_a}</td>
-                  <td>${prix.mis_a_jour_a}</td>
-              `;
-              tableBody.appendChild(row);
-          });
-      } catch (error) {
-          console.error('Error populating table:', error);
-      }
-  }
-  
-  populateTable(); // nedi el function  populateTable() awel ma tet7al el page automatique
-  </script>
+ </script>
+</body>
+
+
 </html>

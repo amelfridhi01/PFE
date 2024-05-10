@@ -69,7 +69,7 @@
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
             <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
-            <span">K. Anderson</span>
+            <span>K. Anderson</span>
           </a><!-- End Profile Iamge Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
@@ -134,7 +134,7 @@
                 <!-- liste des panneaux Nav -->
                   
                 <li class="nav-item">
-                  <a class="nav-link " href="Liste des panneaux.html">
+                  <a class="nav-link" href="Liste des panneaux.html">
                     <i class="bi bi-menu-button-wide"></i>
                     <span>Liste panneaux</span>
                   </a>
@@ -196,65 +196,60 @@
 <div class="card">
   <div class="card-body">
     <div class="row mb-3">
-       
+
+
       <div class="col-sm-3">
-        <label>Zone:</label>
-        <select class="form-select" aria-label="Default select example">
-          <option selected="">Choisir votre zone</option>
-          <option value="1"></option>
-            
+        <label for="zone-select">Zone:</label>
+        <select id="zone-select"class="form-select" aria-label="Default select example">
+          <option value="" selected>Choisir votre zone</option>
+        </select>
+      </div>
+
+
+      <div class="col-sm-3">
+        <label for="region-select">Région:</label>
+        <select id="region-select"class="form-select" aria-label="Default select example">
+          <option value="" selected>Choisir votre région</option>
+        </select>
+      </div>
+
+
+      <div class="col-sm-3">
+        <label for="emplacement-select">Emplacement:</label>
+        <select id="emplacement-select" class="form-select" aria-label="Default select example">
+          <option value="" selected>Choisir votre emplacement</option>
+        </select>
+      </div>
+
+
+      <div class="col-sm-3">
+        <label for="regie-select">Régie:</label>
+        <select id="regie-select" class="form-select" aria-label="Default select example">
+          <option value="" selected>Choisir votre régie</option>
+        </select>
+      </div>
+
+
+      <div class="col-sm-3">
+        <label for="type-select">Type:</label>
+        <select id="type-select" class="form-select" aria-label="Default select example">
+          <option value="" selected>Choisir votre type</option>
         </select>
       </div>
 
       <div class="col-sm-3">
-        <label>Région:</label>
-        <select class="form-select" aria-label="Default select example">
-          <option selected="">Choisir votre région</option>
-          <option value="1"></option>
-         
+        <label for="face-select">face:</label>
+        <select id="face-select" class="form-select" aria-label="Default select example">
+          <option value="" selected>Choisir votre face</option>
         </select>
       </div>
-
-      <div class="col-sm-3">
-        <label>Emplacement:</label>
-        <select class="form-select" aria-label="Default select example">
-          <option selected="">Choisir votre emplacementn</option>
-          <option value="1"></option>
-          
-        </select>
-      </div>
-
-      <div class="col-sm-3">
-        <label>Régie:</label>
-        <select class="form-select" aria-label="Default select example">
-          <option selected="">Choisir votre régie</option>
-          <option value="1"></option>
-        
-        </select>
-      </div>
-      <div class="col-sm-3">
-        <label>Type:</label>
-        <select class="form-select" aria-label="Default select example">
-          <option selected="">Choisir votre type</option>
-          <option value="1"></option>
-          
-        </select>
-      </div>
-      <div class="col-sm-3">
-        <label>Face:</label>
-        <select class="form-select" aria-label="Default select example">
-          <option selected="">Choisir votre face</option>
-          <option value="1"></option>
-          
-        </select>
-      </div>
-   
-      
           <div class="col-12">
           
-            <button id="validerBtn" class="btn btn-primary" type="button">Valider</button>
+            <button id="valider-button" class="btn btn-primary" type="button">Valider</button>
         </div>
-           
+      
+
+    
         <div style="height: 50px;"></div>
         
                   <!-- Table with stripped rows -->
@@ -365,55 +360,157 @@
 <!-- Template Main JS File -->
 <script src="assets/js/main.js"></script>
 
-</body>
 <script>
-  // Fetch data mta3 el panneaux from the server
-  async function fetchData() {
+  document.addEventListener('DOMContentLoaded', async () => {
+    const fetchData = async () => {
       try {
-          const response = await fetch('http://localhost:3001/panneaux/');
-          const data = await response.json();
-          return data;
+        const response = await fetch('http://localhost:3001/panneaux');
+        return response.json();
       } catch (error) {
-          console.error('Error fetching data:', error);
-          throw error; // bech n tcheki si famma erreur
+        console.error('Erreur lors de la récupération des données :', error);
+        throw error;
       }
-  }
-  
-  // Populate the table with fetched data
-  async function populateTable() {
-      try {
-          const data = await fetchData();
-          const tableBody = document.querySelector('#panneauxTable tbody');
-  
-          data.forEach(function (panneau) {
-              var row = document.createElement('tr');
-              row.innerHTML = `
-                  <td><input type="checkbox"></td>
-                  <td> <a htref="#" class="text-primary fw-bold">${panneau.code_face}</a></td>
-                  <td>${panneau.zone}</td>
-                  <td>${panneau.region}</td>
-                  <td>${panneau.emplacement}</td>
-                  <td>${panneau.regie}</td>
-                  <td>${panneau.type}</td>
-                  <td>${panneau.face}</td>
-                  <td>${panneau.eclairage}</td>
-                  <td>${panneau.visibilite}</td>
-                  <td>${panneau.metrage}</td>
-                  <td>${panneau.prix}</td>
-                  <td>${panneau.trafic_routier}</td>
-                  <td>${panneau.photo}</td>
-                  <td>${panneau.position_x}</td>
-                  <td>${panneau.position_Y}</td>
-                  <td>${panneau.cree_a}</td>
-                  <td>${panneau.mis_a_jour_a}</td>
-              `;
-              tableBody.appendChild(row);
-          });
-      } catch (error) {
-          console.error('Error populating table:', error);
+    };
+
+    const populateTable = (data) => {
+      const tableBody = document.querySelector('#panneauxTable tbody');
+      tableBody.innerHTML = '';
+
+      data.forEach((panneau) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><input type="checkbox"></td>
+          <td><a href="#" class="text-primary fw-bold">${panneau.code_face}</a></td>
+          <td>${panneau.zone}</td>
+          <td>${panneau.region}</td>
+          <td>${panneau.emplacement}</td>
+          <td>${panneau.regie}</td>
+          <td>${panneau.type}</td>
+          <td>${panneau.face}</td>
+          <td>${panneau.eclairage}</td>
+          <td>${panneau.visibilite}</td>
+          <td>${panneau.metrage}</td>
+          <td>${panneau.prix}</td>
+          <td>${panneau.trafic_routier}</td>
+          <td>${panneau.photo}</td>
+          <td>${panneau.position_x}</td>
+          <td>${panneau.position_Y}</td>
+          <td>${panneau.cree_a}</td>
+          <td>${panneau.mis_a_jour_a}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    };
+
+    const populateOptions = (selectId, values, label) => {
+      const selectElement = document.getElementById(selectId);
+      selectElement.innerHTML = '';
+      const chooseOption = document.createElement('option');
+      chooseOption.text = `Choisir votre ${label}`;
+      chooseOption.value = '';
+      selectElement.appendChild(chooseOption);
+      values.forEach((value) => {
+        const option = document.createElement('option');
+        option.text = value;
+        option.value = value;
+        selectElement.appendChild(option);
+      });
+    };
+
+    const filterData = async () => {
+      const zone = document.getElementById('zone-select').value;
+      const region = document.getElementById('region-select').value;
+      const emplacement = document.getElementById('emplacement-select').value;
+      const regie = document.getElementById('regie-select').value;
+      const type = document.getElementById('type-select').value;
+      const face = document.getElementById('face-select').value;
+
+      const filteredData = await fetchData();
+      let filteredResults = filteredData;
+
+      if (zone) {
+        filteredResults = filteredResults.filter((panneau) => panneau.zone === zone);
       }
-  }
-  
-  populateTable(); // nedi el function  populateTable() awel ma tet7al el page automatique
-  </script>
+      if (region) {
+        filteredResults = filteredResults.filter((panneau) => panneau.region === region);
+      }
+      if (emplacement) {
+        filteredResults = filteredResults.filter((panneau) => panneau.emplacement === emplacement);
+      }
+      if (regie) {
+        filteredResults = filteredResults.filter((panneau) => panneau.regie === regie);
+      }
+      if (type) {
+        filteredResults = filteredResults.filter((panneau) => panneau.type === type);
+      }
+      if (face) {
+        filteredResults = filteredResults.filter((panneau) => panneau.face === face);
+      }
+
+      populateTable(filteredResults);
+    };
+
+    document.getElementById('valider-button').addEventListener('click', filterData);
+
+    const data = await fetchData();
+    populateTable(data);
+
+    const uniqueZones = [...new Set(data.map((panneau) => panneau.zone))];
+    populateOptions('zone-select', uniqueZones, 'zone');
+
+    const uniqueRegions = [...new Set(data.map((panneau) => panneau.region))];
+    populateOptions('region-select', uniqueRegions, 'région');
+
+    const uniqueEmplacements = [...new Set(data.map((panneau) => panneau.emplacement))];
+    populateOptions('emplacement-select', uniqueEmplacements, 'emplacement');
+
+    const uniqueRegies = [...new Set(data.map((panneau) => panneau.regie))];
+    populateOptions('regie-select', uniqueRegies, 'régie');
+
+    const uniqueTypes = [...new Set(data.map((panneau) => panneau.type))];
+    populateOptions('type-select', uniqueTypes, 'type');
+
+    const uniqueFaces = [...new Set(data.map((panneau) => panneau.face))];
+    populateOptions('face-select', uniqueFaces, 'face');
+  });
+</script>
+  <script>
+
+document.addEventListener("DOMContentLoaded", function() {
+    var boutonAjouterPanier = document.getElementById('ajouter-panier-button');
+    if (boutonAjouterPanier) {
+        boutonAjouterPanier.addEventListener('click', function() {
+            var checkboxes = document.querySelectorAll('#panneauxTable tbody input[type="checkbox"]');
+            var panneauxSelectionnes = [];
+
+            // Vérifier si au moins une case est cochée
+            var auMoinsUnCocher = false;
+            checkboxes.forEach(function(checkbox) {
+                if (checkbox.checked) {
+                    auMoinsUnCocher = true;
+                    var row = checkbox.closest('tr');
+                    var codeFace = row.querySelector('td:nth-child(2)').innerText;
+                    var prix = row.querySelector('td:nth-child(12)').innerText;
+                    var photo = row.querySelector('td:nth-child(14)').innerText;
+
+                    panneauxSelectionnes.push({ codeFace: codeFace, prix: prix, photo: photo });
+                }
+            });
+
+            if (!auMoinsUnCocher) {
+                alert("Veuillez sélectionner au moins une ligne.");
+                return; // Sortir de la fonction si aucune case n'est cochée
+            }
+
+            localStorage.setItem('panneauxSelectionnes', JSON.stringify(panneauxSelectionnes));
+            window.location.href = 'panier.html';
+        });
+    } else {
+        console.error("L'élément avec l'ID 'ajouter-panier-button' n'a pas été trouvé.");
+    }
+    
+   
+});
+</script>
+</body>
 </html>

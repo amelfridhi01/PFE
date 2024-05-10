@@ -9,16 +9,17 @@ router.get("/", async (req, res)=>{
 
 router.get('/promo/:promo', async (req, res) => {
     try {
-        const prix = await PrixModel.findOne({  promo: req.params.promo });
-        if (!prix) {
-            return res.status(404).json({ message: 'The prix with the given promo was not found.' });
+        const prix = await PrixModel.find({ promo: req.params.promo });
+        if (!prix || prix.length === 0) {
+            return res.status(404).json({ message: 'Aucun prix avec la promotion spécifiée n\'a été trouvé.' });
         }
         res.status(200).json(prix);
     } catch (error) {
-        console.error("Error:", error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error("Erreur :", error);
+        res.status(500).json({ error: 'Erreur Interne du Serveur' });
     }
 });
+
 
 //POST ajouter prix
 router.post('/', async (req, res) => { // Utilisez app.post() au lieu de router.post()  

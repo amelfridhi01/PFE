@@ -199,33 +199,29 @@
          
   
         <div class="col-sm-3">
-          <label>Nom Annonceur:</label>
-          <select class="form-select" aria-label="Default select example">
-            <option selected="">Choisir votre Nom Annonceur</option>
-            <option value="1"></option>
+          <label for="nom_annanceur-select">Nom Annanceur:</label>
+          <select id="nom_annanceur-select"class="form-select" aria-label="Default select example">
+            <option value="" selected>Choisir votre nom annanceur</option>
           </select>
         </div>
-  
      
         <div class="col-sm-3">
-          <label>Type publication:</label>
-          <select class="form-select" aria-label="Default select example">
-            <option selected="">Choisir votre Type publication</option>
-            <option value="1"></option>
+          <label for="type_publication-select">Type publication:</label>
+          <select id="type_publication-select"class="form-select" aria-label="Default select example">
+            <option value="" selected>Choisir votre Type publication</option>
           </select>
         </div>
         
         <div class="col-sm-3">
-          <label>Média vusiel:</label>
-          <select class="form-select" aria-label="Default select example">
-            <option selected="">Choisir votre Média vusiel</option>
-            <option value="1"></option>
+          
+          <label for="media_vusiel-select">Média vusiel:</label>
+          <select id="media_vusiel-select"class="form-select" aria-label="Default select example">
+            <option value="" selected>Choisir votre Média vusiel</option>
           </select>
         </div>
-     
 
       <div class="col-12">
-        <button class="btn btn-primary" type="submit">Valider</button>
+        <button id="valider-button" class="btn btn-primary" type="button">Valider</button>
       </div>
       <div style="height: 50px;"></div>
      <!-- Table with stripped rows -->
@@ -243,7 +239,9 @@
                     <th>Date de modification</th>
                   </tr>
                 </thead>
-               
+               <tbody>
+
+               </tbody>
               </table>
               <!-- End Table with stripped rows -->
             
@@ -292,44 +290,91 @@
 
 </body>
 <script>
-  // Fetch data mta3 el panneaux from the server
-  async function fetchData() {// tsarbi data
+  document.addEventListener('DOMContentLoaded', async () => {
+    const fetchData = async () => {
       try {
-          const response = await fetch('http://localhost:3001/compagnes/');
-          const data = await response.json();
-          return data;
+        const response = await fetch('http://localhost:3001/compagnes/');
+        return response.json();
       } catch (error) {
-          console.error('Error fetching data:', error);
-          throw error; // bech n tcheki si famma erreur
+        console.error('Erreur lors de la récupération des données :', error);
+        throw error;
       }
-  }
-  
-  // Populate the table with fetched data
-  async function populateTable() {
-      try {
-          const data = await fetchData();
-          const tableBody = document.querySelector('#compagnesTable tbody');
-  
-          data.forEach(function (compagne) {
-              var row = document.createElement('tr');
-              row.innerHTML = `
-                  <td>${compagne.nom_annanceur}</td>
-                  <td>${compagne.type_publication}</td>
-                  <td>${compagne.date_publication}</td>
-                  <td>${compagne.date_retrait}</td>
-                  <td>${compagne.photo}</td>
-                  <td>${compagne.media_vusiel}</td>
-                  <td>${compagne.cree_a}</td>
-                  <td>${compagne.mis_a_jour_a}</td>
+    };
 
-              `;
-              tableBody.appendChild(row);
-          });
-      } catch (error) {
-          console.error('Error populating table:', error);
+    // Populate the table with fetched data
+    const populateTable = (data) => {
+      const tableBody = document.querySelector('#compagnesTable tbody');
+      tableBody.innerHTML = '';
+      data.forEach((compagne) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${compagne.nom_annanceur}</td>
+          <td>${compagne.type_publication}</td>
+          <td>${compagne.date_publication}</td>
+          <td>${compagne.date_retrait}</td>
+          <td>${compagne.photo}</td>
+          <td>${compagne.media_vusiel}</td>
+          <td>${compagne.cree_a}</td>
+          <td>${compagne.mis_a_jour_a}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    };
+
+    const populateOptions = (selectId, values, label) => {
+      const selectElement = document.getElementById(selectId);
+      selectElement.innerHTML = '';
+      const chooseOption = document.createElement('option');
+      chooseOption.text = `Choisir votre ${label}`;
+      chooseOption.value = '';
+      selectElement.appendChild(chooseOption);
+      values.forEach((value) => {
+        const option = document.createElement('option');
+        option.text = value;
+        option.value = value;
+        selectElement.appendChild(option);
+      });
+    };
+
+    const filterData = async () => {
+      const nom_annanceur = document.getElementById('nom_annanceur-select').value;
+      const type_publication = document.getElementById('type_publication-select').value;
+      const media_vusiel = document.getElementById('media_vusiel-select').value;
+
+      const filteredData = await fetchData();
+      let filteredResults = filteredData;
+
+      if (nom_annanceur) {
+        filteredResults = filteredResults.filter((compagne) => compagne.nom_annanceur === nom_annanceur);
       }
-  }
-  
-  populateTable(); // nedi el function  populateTable() awel ma tet7al el page automatique
-  </script>
+      if (type_publication) {
+        filteredResults = filteredResults.filter((compagne) => compagne.type_publication === type_publication);
+      }
+      if (media_vusiel) {
+        filteredResults = filteredResults.filter((compagne) => compagne.media_vusiel === media_vusiel);
+      }
+
+      populateTable(filteredResults);
+    };
+
+    document.getElementById('valider-button').addEventListener('click', filterData);
+
+    const data = await fetchData();
+    populateTable(data);
+
+    const uniqueNom_annanceurs = [...new Set(data.map((compagne) => compagne.nom_annanceur))];
+    populateOptions('nom_annanceur-select', uniqueNom_annanceurs, 'nom_annanceur');
+
+    const uniqueType_publications = [...new Set(data.map((compagne) => compagne.type_publication))];
+    populateOptions('type_publication-select', uniqueType_publications, 'type_publication');
+
+    const uniqueMedia_vusiels = [...new Set(data.map((compagne) => compagne.media_vusiel))];
+    populateOptions('media_vusiel-select', uniqueMedia_vusiels, 'media_vusiel');
+  });
+</script>
+
+
+<!-- Vos autres balises script -->
+</body>
+
 </html>

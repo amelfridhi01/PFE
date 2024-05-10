@@ -5,6 +5,7 @@ const bodyParser = require ("body-parser");
 const cors = require ('cors');
 const app = express();
 app.use(cors());// enable cors for all routes
+app.use(express.json());
 
 //CONNECT TO DB
 const mongoose = require("mongoose")
@@ -53,6 +54,11 @@ app.use('/users',getUsers)
 
 const getContacts = require ('./routers/contactsRouter');
 app.use('/contacts',getContacts)
+
+
+const getStatistic = require ('./routers/statistics');
+app.use('/statistic',getStatistic)
+
 
 
 app.listen("3001", ()=>{

@@ -105,7 +105,7 @@ router.get("/onlynom_annanceur", async (req, res) => {
         res.status(500).json({ error: 'Erreur Interne du Serveur' });
     }
 });
-router.get("/onlytypepublication", async (req, res) => {
+router.get("/onlytype_publication", async (req, res) => {
     try {
         const compagnes = await CompagneModel.find({}, 'type_publication'); // Seuls les champs 'type_publication' sont renvoyés
         res.json(compagnes);
